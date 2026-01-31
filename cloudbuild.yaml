@@ -1,0 +1,48 @@
+steps:
+  # Build the container image with build arguments
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'API_KEY=${_API_KEY}'
+      - '--build-arg'
+      - 'VITE_SUPABASE_URL=${_VITE_SUPABASE_URL}'
+      - '--build-arg'
+      - 'VITE_SUPABASE_ANON_KEY=${_VITE_SUPABASE_ANON_KEY}'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/wanderlist:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/wanderlist:latest'
+      - '.'
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/wanderlist:$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/wanderlist:latest']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'wanderlist'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/wanderlist:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/wanderlist:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/wanderlist:latest'
+
+# Substitution variables for build-time environment variables
+substitutions:
+  _API_KEY: 'your-api-key-here'
+  _VITE_SUPABASE_URL: 'your-supabase-url-here'
+  _VITE_SUPABASE_ANON_KEY: 'your-supabase-anon-key-here'
