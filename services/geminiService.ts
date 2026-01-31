@@ -1,29 +1,21 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Create a helper to get the AI instance safely
-const getAI = () => {
-  const apiKey = process.env.API_KEY;
-  // Crucial: Only initialize if the key is actually a non-empty string
-  if (!apiKey || apiKey.trim() === "") {
-    console.warn("Gemini API Key is missing or empty. AI features will not work.");
-    return null;
-  }
-  
-  try {
-    return new GoogleGenAI({ apiKey });
-  } catch (err) {
-    console.error("Failed to initialize GoogleGenAI:", err);
-    return null;
-  }
-};
-
+// Cache to prevent redundant API calls for the same query
 const searchCache = new Map();
 
+/**
+ * Validates the API key from environment variables.
+ * Returns true if the key is present and not a placeholder.
+ */
+const hasValidApiKey = () => {
+  const apiKey = process.env.API_KEY;
+  return !!(apiKey && apiKey !== '""' && apiKey !== "''" && apiKey.trim() !== "");
+};
+
 export async function searchPlaces(query: string, city: string) {
-  const ai = getAI();
-  if (!ai) {
-    // Return mock or empty if AI is not available
+  if (!hasValidApiKey()) {
+    console.warn("Gemini API Key is missing. Place search disabled.");
     return [];
   }
 
@@ -31,9 +23,12 @@ export async function searchPlaces(query: string, city: string) {
   if (searchCache.has(cacheKey)) return searchCache.get(cacheKey);
 
   try {
+    // Direct initialization with named parameter as required by guidelines
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `List 5 most relevant places matching "${query}" in/near ${city}. Return JSON array with name, lat, lng.`,
+      contents: `List 5 popular places matching "${query}" in ${city}. Return a valid JSON array where each item has "name", "lat" (number), and "lng" (number).`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -51,29 +46,35 @@ export async function searchPlaces(query: string, city: string) {
       },
     });
 
+    // Directly access text property as per guidelines (not a method call)
     const text = response.text;
     if (!text) return [];
-    
+
     const data = JSON.parse(text);
     searchCache.set(cacheKey, data);
     return data;
   } catch (error) {
-    console.error("Search places failed:", error);
+    console.error("Place search failed:", error);
     return [];
   }
 }
 
 export async function searchCities(query: string) {
-  const ai = getAI();
-  if (!ai) return [];
+  if (!hasValidApiKey()) {
+    console.warn("Gemini API Key is missing. City search disabled.");
+    return [];
+  }
 
   const cacheKey = `cities:${query}`;
   if (searchCache.has(cacheKey)) return searchCache.get(cacheKey);
 
   try {
+    // Direct initialization with named parameter as required by guidelines
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Search for top 5 cities matching "${query}". Return JSON with Name, Lat, Lng.`,
+      contents: `Search for the top 5 cities matching "${query}". Return a valid JSON array where each item has "name", "lat" (number), and "lng" (number).`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -91,6 +92,7 @@ export async function searchCities(query: string) {
       },
     });
 
+    // Directly access text property as per guidelines (not a method call)
     const text = response.text;
     if (!text) return [];
 

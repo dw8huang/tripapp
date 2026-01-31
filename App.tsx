@@ -40,6 +40,8 @@ const App: React.FC = () => {
       mainCities: data.mainCities || [],
       dayCityMap: {},
       passwordHash: data.passwordHash || '',
+      ownerPasswordHash: data.ownerPasswordHash || data.passwordHash || '',
+      ownerName: data.ownerName || userName || 'Owner',
       events: [],
       collaborators: [],
       maxCollaborators: 10,

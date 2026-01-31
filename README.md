@@ -8,7 +8,7 @@ A real-time collaborative trip planning app built with React, TypeScript, and Ge
 
 ## Website
 
-> **Live site:** _Coming soon -- URL will be added here._
+**Live site:** [https://wanderlist-collaborative-itinerary-535868137095.us-west1.run.app](https://wanderlist-collaborative-itinerary-535868137095.us-west1.run.app)
 
 ## Run Locally
 
@@ -26,14 +26,12 @@ A real-time collaborative trip planning app built with React, TypeScript, and Ge
 
 ## Cloud Database
 
-> **Database details will be added here once configured.**
->
-> This app is designed to work with [Supabase](https://supabase.com/). See `services/dataService.ts` for the integration scaffold (currently using localStorage as a fallback).
->
-> To enable cloud storage:
-> 1. Create a Supabase project
-> 2. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in your environment
-> 3. Uncomment the Supabase client code in `services/dataService.ts`
+This app uses [Supabase](https://supabase.com/) for cloud storage and real-time collaboration. The integration is fully configured in [services/dataService.ts](services/dataService.ts) and [services/supabase.ts](services/supabase.ts).
+
+**Configuration:**
+- Supabase URL and anon key are set in [.env.local](.env.local)
+- Fallback to localStorage when Supabase is unavailable
+- Automatic trip syncing when sharing via URL
 
 ## Features
 

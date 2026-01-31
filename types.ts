@@ -34,7 +34,9 @@ export interface Trip {
   endDate: string;
   mainCities: Location[];
   dayCityMap: Record<number, string>;
-  passwordHash: string;
+  passwordHash: string; // Join password
+  ownerPasswordHash: string; // Admin password
+  ownerName: string;
   events: TripEvent[];
   collaborators: string[];
   maxCollaborators: number; // New: Limit for collaboration
