@@ -40,4 +40,4 @@ export interface Trip {
   maxCollaborators: number; // New: Limit for collaboration
 }
 
-export type ViewMode = 'itinerary' | 'map' | 'people';
+export type ViewMode = 'itinerary' | 'map' | 'settings';

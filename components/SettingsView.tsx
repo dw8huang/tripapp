@@ -3,14 +3,15 @@ import React, { useState, useRef } from 'react';
 import { Trip, Location } from '../types';
 import { searchCities } from '../services/geminiService';
 import { dataService } from '../services/dataService';
+import { downloadTripCSV } from '../services/csvExport';
 
-interface PeopleViewProps {
+interface SettingsViewProps {
   trip: Trip;
   onUpdate: (trip: Trip) => void;
   userName: string;
 }
 
-const PeopleView: React.FC<PeopleViewProps> = ({ trip, onUpdate, userName }) => {
+const SettingsView: React.FC<SettingsViewProps> = ({ trip, onUpdate, userName }) => {
   const [newPassword, setNewPassword] = useState('');
   const [isUpdatingPass, setIsUpdatingPass] = useState(false);
   
@@ -179,8 +180,26 @@ const PeopleView: React.FC<PeopleViewProps> = ({ trip, onUpdate, userName }) => 
           )}
         </div>
       </section>
+
+      <section className="space-y-4">
+        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest px-2">Export</h3>
+        <div className="bg-white rounded-[32px] p-7 border border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-black text-slate-800">Export Itinerary</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Download trip plan as CSV</p>
+            </div>
+            <button
+              onClick={() => downloadTripCSV(trip)}
+              className="px-5 py-3 bg-blue-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition active:scale-95 shadow-lg"
+            >
+              Download CSV
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
 
-export default PeopleView;
+export default SettingsView;

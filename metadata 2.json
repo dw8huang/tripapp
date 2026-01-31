@@ -1,7 +1,0 @@
-{
-  "name": "WanderList - Collaborative Itinerary",
-  "description": "A collaborative, link-based travel itinerary app that allows groups to plan trips with day-by-day scheduling, map visualization, and shared access.",
-  "requestFramePermissions": [
-    "geolocation"
-  ]
-}
